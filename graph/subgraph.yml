@@ -1,0 +1,58 @@
+specVersion: 0.0.2
+description: Real Estate Agency
+repository: https://github.com/PureStake/moonlotto-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: RealEstate
+    network: mainnet
+    source:
+      address: '0xd68Dca6F6360bf3f8F83F1779e66630D071534fd'
+      abi: RealEstate
+      startBlock: 3
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./mapping/mappings.ts
+      entities:
+        - EstatePlace
+        - RealEstate
+      abis:
+        - name: RealEstate
+          file: ../artifacts/contracts/RealEstate.sol/RealEstateToken.json
+      eventHandlers:
+        - event: EstateRegistered(indexed address,indexed uint256,((string,string,string,string,string,string),uint8,bool,bool,bool,uint256,address,bool,string[]))
+          handler: handleRealEstateRegistered
+        - event: EstateChanged(indexed uint256,((string,string,string,string,string,string),uint8,bool,bool,bool,uint256,address,bool,string[]))
+          handler: handleRealEstateChanged
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleRealEstateTransfer
+        - event: InterestRegistered(indexed uint256,indexed address)
+          handler: handleInterestRegistered
+
+  - kind: ethereum/contract
+    name: UserManagement
+    network: mainnet
+    source:
+      address: '0x4e61150B131B60d4633d0F47a25F1D30d9292830'
+      abi: UserManagement
+      startBlock: 3
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./mapping/user.ts
+      entities:
+        - User
+      abis:
+        - name: UserManagement
+          file: ../artifacts/contracts/User.sol/UserManagement.json
+      eventHandlers:
+        - event: UserRegistered(indexed address,(string,string,string))
+          handler: handleUserRegistered
+        - event: UserApproved(indexed address,indexed address)
+          handler: handleUserApproved
+        - event: UserDenied(indexed address,indexed address)
+          handler: handleUserDenied

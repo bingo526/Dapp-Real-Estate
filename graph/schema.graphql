@@ -1,0 +1,71 @@
+
+enum EstateStatus {
+    OCCUPIED,
+    AVAILABLE
+}
+
+
+type EstatePlace @entity {
+  id: ID!
+  street: String!
+  number: String!
+  city: String!
+  country: String!
+  region: String!
+  neighbour: String!
+}
+
+type RealEstate @entity {
+    id: ID!
+    place: EstatePlace!
+    photos: [String!]!
+    isTrading: Boolean
+    status: EstateStatus!
+    price: BigInt
+    isAcceptingEstate: Boolean
+    registerDate: BigInt
+    lastModified: BigInt
+    agencyOwner: ID!
+    interestedIn: [User!]
+    isFinanced: Boolean
+    ownerIsHolder: Boolean
+    owner: User
+}
+
+enum UserStatus {
+    REGISTERED, PENDING, DENIED
+}
+
+type User @entity {
+  id: ID!
+  name: String!
+  cellphone: String!
+  email: String!
+  status: UserStatus!
+  realEstates: [RealEstate!]! @derivedFrom(field: "owner")
+}
+
+enum UserAuditEvent {
+    APPROVED, DENIED, REGISTERED
+}
+
+type UserAudit @entity {
+    causedBy: String!
+    action: UserAuditEvent!
+    blockNumber: BigInt!
+    userId: ID!
+    id: ID!
+}
+
+enum RealEstateAuditEvent {
+    REGISTERED, CHANGED, SOLD, TRANSFERRED
+}
+
+type RealEstateAudit @entity {
+    causedBy: String!
+    action: RealEstateAuditEvent!
+    realEstateId: ID!
+    blockNumber: BigInt!
+    id: ID!
+}
+
